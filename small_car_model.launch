@@ -1,0 +1,43 @@
+<launch>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <!--<arg name="world_name" value="$(find small_car_model)/worlds/ramp.world"/>-->
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+        <remap from="tf" to="gazebo_tf"/>
+    </include>
+    <group ns="turtle1">
+   <param name="robot_description"  command="$(find xacro)/xacro -i '$(find small_car_model)/urdf/small_car.xacro' bodyframe:=turtle1 ns:=turtle1"/>
+
+    <!-- send fake joint values -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="False"/>
+    </node>
+
+    <!-- Combine joint values -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  output="screen" >
+        <param name="publish_frequency" type="double" value="50.0" />
+        <param name="tf_prefix" value="turtle1" />
+</node>
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtle1  -x 0.0 -y 0.0 -z 0 -R 0 -P 0 -Y 0 -param robot_description" />
+   </group>
+   
+   
+   <group ns="turtle2">
+   <param name="robot_description"  command="$(find xacro)/xacro -i '$(find small_car_model)/urdf/small_car.xacro' bodyframe:=turtle2 ns:=turtle2"/>
+
+    <!-- send fake joint values -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="False"/>
+    </node>
+
+    <!-- Combine joint values -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  output="screen" >
+        <param name="publish_frequency" type="double" value="50.0" />
+        <param name="tf_prefix" value="turtle2" />
+</node>
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtle2  -x 0.0 -y 0.0 -z 0 -R 0 -P 0 -Y 0 -param robot_description" />
+   </group>
+</launch>
